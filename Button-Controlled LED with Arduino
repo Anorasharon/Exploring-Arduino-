@@ -1,0 +1,26 @@
+# Arduino Button and LED Project
+
+## Circuit Connections
+- Button pin 1 → Arduino pin 3
+- Button pin 2 → GND
+- LED anode (long leg) → Arduino pin 8 via 220Ω resistor
+- LED cathode (short leg) → GND
+
+## Arduino Code
+
+int button = 3;
+int led = 8;
+
+void setup() {
+  pinMode(button, INPUT);
+  pinMode(led, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (digitalRead(button) == HIGH) {
+    digitalWrite(led, HIGH);
+  } else {
+    digitalWrite(led, LOW);
+  }
+}
