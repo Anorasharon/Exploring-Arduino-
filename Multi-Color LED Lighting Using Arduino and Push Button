@@ -1,0 +1,90 @@
+# RGB LED Nightlight with Button Control
+
+## Hardware Connections
+
+| Component    | Arduino Pin | Notes                    |
+|--------------|-------------|--------------------------|
+| Red LED      | Digital 2   | Connect LED anode (+) to pin 2 through a resistor (~220Ω). Cathode (-) to GND. |
+| Green LED    | Digital 3   | Same as Red LED but pin 3. |
+| Blue LED     | Digital 5   | Same as above but pin 5. |
+| Push Button  | Digital 12  | One side to pin 12, other side to GND. Use internal pull-up or external pull-down resistor. |
+
+---
+
+## Arduino Code
+
+const int RLED = 2;
+const int GLED = 3;
+const int BLED = 5;
+const int button = 12;
+
+boolean lastbutton = LOW;
+boolean currentbutton = LOW;
+
+int ledMode = 0;
+
+void setup() {
+  pinMode(RLED, OUTPUT);
+  pinMode(GLED, OUTPUT);
+  pinMode(BLED, OUTPUT);
+  pinMode(button, INPUT);
+}
+
+boolean debounce(boolean last) {
+  boolean current = digitalRead(button);
+  if (last != current) {
+    delay(10);
+    current = digitalRead(button);
+  }
+  return current;
+}
+
+void setMode(int mode) {
+  digitalWrite(RLED, LOW);
+  digitalWrite(GLED, LOW);
+  digitalWrite(BLED, LOW);
+
+  if (mode == 1) {
+    digitalWrite(RLED, HIGH);
+  }
+  else if (mode == 2) {
+    digitalWrite(GLED, HIGH);
+  }
+  else if (mode == 3) {
+    digitalWrite(BLED, HIGH);
+  }
+  else if (mode == 4) {
+    analogWrite(RLED, 127);
+    analogWrite(BLED, 127);
+  }
+  else if (mode == 5) {
+    analogWrite(GLED, 127);
+    analogWrite(BLED, 127);
+  }
+  else if (mode == 6) {
+    analogWrite(RLED, 127);
+    analogWrite(GLED, 127);
+  }
+  else if (mode == 7) {
+    analogWrite(RLED, 85);
+    analogWrite(GLED, 85);
+    analogWrite(BLED, 85);
+  }
+}
+
+void loop() {
+  currentbutton = debounce(lastbutton);
+
+  if (lastbutton == LOW && currentbutton == HIGH) {
+    ledMode++;
+  }
+
+  lastbutton = currentbutton;
+
+  if (ledMode == 8) {
+    ledMode = 0;
+  }
+
+  setMode(ledMode);
+}
+
